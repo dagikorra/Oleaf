@@ -5,7 +5,7 @@ const crypto = require("node:crypto");
 
 const PORT = Number(process.env.PORT || 8080);
 const HOST = process.env.HOST || "0.0.0.0";
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "manager@oleafcleaning.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "oleafcleaning@gmail.com";
 const FROM_EMAIL = process.env.FROM_EMAIL || "reservations@oleafcleaning.com";
 const ROOT = __dirname;
 const DATA_DIR = path.join(ROOT, "data");
@@ -14,7 +14,7 @@ const RESERVATIONS_FILE = path.join(DATA_DIR, "reservations.json");
 
 const staffUsers = [
   {
-    email: "manager@oleafcleaning.com",
+    email: "oleafcleaning@gmail.com",
     password: process.env.ADMIN_PASSWORD || "cleaningv1",
     role: "admin",
     name: "Oleaf Admin"

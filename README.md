@@ -32,7 +32,7 @@ Render will install dependencies, run `npm start`, and serve the site and API fr
 ## Demo staff accounts
 
 ```text
-Admin: manager@oleafcleaning.com / cleaningv1
+Admin: oleafcleaning@gmail.com / cleaningv1
 Cleaner: cleaner@oleafcleaning.com / cleaningv1
 ```
 
@@ -54,7 +54,7 @@ SMTP_SECURE=false
 SMTP_USER=
 SMTP_PASS=
 FROM_EMAIL=reservations@oleafcleaning.com
-ADMIN_EMAIL=manager@oleafcleaning.com
+ADMIN_EMAIL=oleafcleaning@gmail.com
 ```
 
 GitHub Pages can host the static site, but it cannot run this backend. For the full reservation/email/login workflow, use the Render deployment instead of GitHub Pages.

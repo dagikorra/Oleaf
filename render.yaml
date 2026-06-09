@@ -10,7 +10,7 @@ services:
       - key: NODE_VERSION
         value: 22
       - key: ADMIN_EMAIL
-        value: manager@oleafcleaning.com
+        value: oleafcleaning@gmail.com
       - key: FROM_EMAIL
         value: reservations@oleafcleaning.com
       - key: ADMIN_PASSWORD
