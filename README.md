@@ -53,7 +53,7 @@ SMTP_PORT=
 SMTP_SECURE=false
 SMTP_USER=
 SMTP_PASS=
-FROM_EMAIL=reservations@oleafcleaning.com
+FROM_EMAIL=oleafcleaning@gmail.com
 ADMIN_EMAIL=oleafcleaning@gmail.com
 ```
 
