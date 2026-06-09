@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BrightNest Cleaning</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#booking" aria-label="BrightNest home">
+        <span class="brand-mark">BN</span>
+        <span>
+          <strong>BrightNest</strong>
+          <small>Cleaning Co.</small>
+        </span>
+      </a>
+      <nav aria-label="Primary">
+        <a href="#booking">Book</a>
+        <a href="#operations">Operations</a>
+        <a href="#tracking">Tracking</a>
+      </nav>
+      <a class="nav-cta" href="#booking">Reserve</a>
+    </header>
+
+    <main>
+      <section class="hero" id="booking">
+        <img src="clean-home-hero.png" alt="Freshly cleaned modern home interior">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <div class="hero-copy">
+            <p class="eyebrow">Residential and commercial cleaning</p>
+            <h1>BrightNest Cleaning</h1>
+            <p class="hero-line">Book, pay, track, and confirm cleaning work from one polished service desk.</p>
+            <div class="hero-actions">
+              <a class="primary-action" href="#booking-card">Start booking</a>
+              <a class="secondary-action" href="#operations">Staff login</a>
+            </div>
+          </div>
+
+          <form class="booking-card" id="booking-card">
+            <div class="card-head">
+              <div>
+                <p class="eyebrow">Reservation</p>
+                <h2>Book cleaning</h2>
+              </div>
+              <div class="qr-box">
+                <img id="qrImage" alt="Reservation QR code">
+              </div>
+            </div>
+
+            <label>
+              Service type
+              <select id="serviceType">
+                <option value="standard" data-price="120">Standard home cleaning</option>
+                <option value="deep" data-price="210">Deep cleaning</option>
+                <option value="move" data-price="260">Move-in / move-out</option>
+                <option value="office" data-price="180">Office cleaning</option>
+                <option value="house-quote" data-price="0">House quote request</option>
+              </select>
+            </label>
+
+            <div class="form-grid">
+              <label>
+                Date
+                <input id="bookingDate" type="date" required>
+              </label>
+              <label>
+                Time
+                <input id="bookingTime" type="time" value="09:00" required>
+              </label>
+            </div>
+
+            <label>
+              Service address
+              <input id="address" type="text" value="1420 Maple Ridge Dr, Atlanta, GA" required>
+            </label>
+
+            <div class="form-grid">
+              <label>
+                Rooms
+                <input id="rooms" type="number" min="1" max="12" value="4">
+              </label>
+              <label>
+                Customer mobile
+                <input id="customerPhone" type="tel" value="(404) 555-0188">
+              </label>
+            </div>
+
+            <fieldset class="pay-options">
+              <legend>Payment</legend>
+              <label><input type="radio" name="payment" value="card" checked> Card</label>
+              <label><input type="radio" name="payment" value="invoice"> Invoice</label>
+              <label><input type="radio" name="payment" value="onsite"> On site</label>
+            </fieldset>
+
+            <div class="estimate-row">
+              <span id="estimateLabel">Estimated total</span>
+              <strong id="estimate">$160</strong>
+            </div>
+
+            <button class="submit-btn" type="submit">Reserve and pay</button>
+            <p class="reservation-note" id="reservationNote">Reservation link updates this QR code automatically.</p>
+          </form>
+        </div>
+      </section>
+
+      <section class="section-band dashboard" id="operations">
+        <div class="section-title">
+          <p class="eyebrow">Cleaner and admin portal</p>
+          <h2>Task command center</h2>
+        </div>
+
+        <div class="portal-shell">
+          <aside class="login-panel">
+            <div class="segmented" role="tablist" aria-label="Staff role">
+              <button class="active" type="button" data-role="admin">Admin</button>
+              <button type="button" data-role="cleaner">Cleaner</button>
+            </div>
+            <label>
+              Email
+              <input type="email" value="manager@brightnest.co">
+            </label>
+            <label>
+              Password
+              <input type="password" value="cleaningv1">
+            </label>
+            <button class="secondary-btn" type="button" id="loginBtn">Sign in</button>
+            <div class="session-card">
+              <span>Signed in as</span>
+              <strong id="activeRole">Admin</strong>
+            </div>
+          </aside>
+
+          <div class="task-board">
+            <div class="board-toolbar">
+              <div>
+                <p class="eyebrow">Today</p>
+                <h3>Assigned work</h3>
+              </div>
+              <button class="outline-btn" type="button" id="addTaskBtn">Add task</button>
+            </div>
+            <div class="task-columns" id="taskColumns" aria-live="polite"></div>
+          </div>
+
+          <aside class="detail-panel" id="taskDetail">
+            <p class="eyebrow">Selected task</p>
+            <h3 id="detailTitle">Maple Ridge deep clean</h3>
+            <dl>
+              <div><dt>Cleaner</dt><dd id="detailCleaner">Avery</dd></div>
+              <div><dt>Customer</dt><dd id="detailCustomer">Maya Chen</dd></div>
+              <div><dt>Window</dt><dd id="detailWindow">9:00 AM - 12:00 PM</dd></div>
+            </dl>
+            <label>
+              Assign cleaner
+              <select id="assignCleaner">
+                <option>Avery</option>
+                <option>Jordan</option>
+                <option>Sam</option>
+                <option>Riley</option>
+              </select>
+            </label>
+            <div class="photo-row">
+              <label class="upload-tile">
+                Before
+                <input id="beforePhoto" type="file" accept="image/*">
+                <span id="beforePreview">Upload</span>
+              </label>
+              <label class="upload-tile">
+                After
+                <input id="afterPhoto" type="file" accept="image/*">
+                <span id="afterPreview">Upload</span>
+              </label>
+            </div>
+            <div class="detail-actions">
+              <button class="outline-btn" type="button" data-update="in-progress">Start</button>
+              <button class="complete-btn" type="button" data-update="completed">Complete</button>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section-band tracking" id="tracking">
+        <div class="section-title">
+          <p class="eyebrow">Live service status</p>
+          <h2>Location and notification desk</h2>
+        </div>
+        <div class="tracking-grid">
+          <div class="map-panel">
+            <div class="map-canvas" aria-label="Service area map">
+              <span class="pin home-pin"></span>
+              <span class="pin crew-pin"></span>
+              <span class="route"></span>
+              <span class="map-label customer">Customer</span>
+              <span class="map-label crew">Crew</span>
+            </div>
+            <button class="secondary-btn" type="button" id="locateBtn">Use current location</button>
+            <p id="locationStatus">Crew is 2.4 miles from the next reservation.</p>
+          </div>
+
+          <div class="notification-panel">
+            <p class="eyebrow">Customer notification</p>
+            <h3 id="noticeTitle">Ready to send</h3>
+            <p id="noticeBody">When a task is completed, BrightNest sends the customer a confirmation by SMS and email.</p>
+            <div class="toggle-list">
+              <label><input type="checkbox" checked> SMS</label>
+              <label><input type="checkbox" checked> Email</label>
+              <label><input type="checkbox"> Receipt PDF</label>
+            </div>
+            <button class="submit-btn" type="button" id="sendNoticeBtn">Send completion notice</button>
+          </div>
+
+          <div class="quote-panel">
+            <p class="eyebrow">House quote</p>
+            <h3>Quote intake</h3>
+            <label>
+              Square footage
+              <input id="sqft" type="number" min="500" value="2200">
+            </label>
+            <label>
+              Notes
+              <textarea id="quoteNotes" rows="4">Pets, interior windows, basement, recurring monthly service.</textarea>
+            </label>
+            <button class="outline-btn" type="button" id="quoteBtn">Request quote</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
