@@ -11,6 +11,8 @@ const ROOT = __dirname;
 const DATA_DIR = path.join(ROOT, "data");
 const OUTBOX_DIR = path.join(DATA_DIR, "outbox");
 const RESERVATIONS_FILE = path.join(DATA_DIR, "reservations.json");
+const DATABASE_URL = process.env.DATABASE_URL;
+let dbPool;
 
 const staffUsers = [
   {
@@ -38,6 +40,33 @@ const mimeTypes = {
   ".svg": "image/svg+xml; charset=utf-8"
 };
 
+function getDbPool() {
+  if (!dbPool) {
+    const { Pool } = require("pg");
+    dbPool = new Pool({
+      connectionString: DATABASE_URL,
+      ssl: process.env.DATABASE_SSL === "false" ? false : { rejectUnauthorized: false }
+    });
+  }
+
+  return dbPool;
+}
+
+async function ensureDatabase() {
+  if (!DATABASE_URL) {
+    ensureStorage();
+    return;
+  }
+
+  await getDbPool().query(`
+    create table if not exists reservations (
+      id text primary key,
+      payload jsonb not null,
+      created_at timestamptz not null default now()
+    )
+  `);
+}
+
 function ensureStorage() {
   fs.mkdirSync(OUTBOX_DIR, { recursive: true });
   if (!fs.existsSync(RESERVATIONS_FILE)) {
@@ -45,14 +74,41 @@ function ensureStorage() {
   }
 }
 
-function readReservations() {
+async function readReservations() {
+  if (DATABASE_URL) {
+    await ensureDatabase();
+    const result = await getDbPool().query(
+      "select payload from reservations order by created_at desc"
+    );
+    return result.rows.map((row) => row.payload);
+  }
+
   ensureStorage();
   return JSON.parse(fs.readFileSync(RESERVATIONS_FILE, "utf8"));
 }
 
-function writeReservations(reservations) {
+async function writeReservations(reservations) {
   ensureStorage();
   fs.writeFileSync(RESERVATIONS_FILE, `${JSON.stringify(reservations, null, 2)}\n`);
+}
+
+async function saveReservation(reservation) {
+  if (DATABASE_URL) {
+    await ensureDatabase();
+    await getDbPool().query(
+      `
+        insert into reservations (id, payload, created_at)
+        values ($1, $2, $3)
+        on conflict (id) do update set payload = excluded.payload
+      `,
+      [reservation.id, reservation, reservation.createdAt]
+    );
+    return;
+  }
+
+  const reservations = await readReservations();
+  reservations.unshift(reservation);
+  await writeReservations(reservations);
 }
 
 function sendJson(response, statusCode, payload) {
@@ -191,7 +247,6 @@ async function createReservation(payload) {
     return { error: validationError };
   }
 
-  const reservations = readReservations();
   const reservation = {
     id: `OC-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${crypto.randomUUID().slice(0, 8).toUpperCase()}`,
     serviceType: payload.serviceType,
@@ -208,8 +263,7 @@ async function createReservation(payload) {
     createdAt: new Date().toISOString()
   };
 
-  reservations.unshift(reservation);
-  writeReservations(reservations);
+  await saveReservation(reservation);
 
   const customerEmail = emailTemplate(reservation, "customer");
   const adminEmail = emailTemplate(reservation, "admin");
@@ -278,7 +332,7 @@ async function handleApi(request, response) {
     }
 
     if (request.url === "/api/reservations" && request.method === "GET") {
-      sendJson(response, 200, { reservations: readReservations() });
+      sendJson(response, 200, { reservations: await readReservations() });
       return;
     }
 
@@ -298,7 +352,9 @@ async function handleApi(request, response) {
   }
 }
 
-ensureStorage();
+ensureDatabase().catch((error) => {
+  console.error("Database initialization failed:", error.message);
+});
 
 http.createServer((request, response) => {
   if (request.url.startsWith("/api/")) {

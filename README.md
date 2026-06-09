@@ -29,6 +29,8 @@ CLEANER_PASSWORD=choose-a-strong-password
 
 Render will install dependencies, run `npm start`, and serve the site and API from the same URL. The booking form will call `/api/reservations` automatically on that deployed URL.
 
+The blueprint also creates a Render Postgres database and injects its connection string as `DATABASE_URL`. When `DATABASE_URL` exists, reservations are stored in Postgres. Without it, local development falls back to `data/reservations.json`.
+
 ## Demo staff accounts
 
 ```text

@@ -8,6 +8,7 @@
     "check": "node --check app.js && node --check server.js"
   },
   "dependencies": {
-    "nodemailer": "^6.9.16"
+    "nodemailer": "^6.9.16",
+    "pg": "^8.13.1"
   }
 }
