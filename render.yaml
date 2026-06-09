@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: oleaf-cleaning
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: ADMIN_EMAIL
+        value: manager@oleafcleaning.com
+      - key: FROM_EMAIL
+        value: reservations@oleafcleaning.com
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: CLEANER_PASSWORD
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_SECURE
+        value: "false"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false

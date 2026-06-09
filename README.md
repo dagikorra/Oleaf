@@ -11,6 +11,24 @@ npm start
 
 Open `http://127.0.0.1:8080`.
 
+## Deploy with Render
+
+This repo includes `render.yaml`, so Render can run the frontend and backend together from GitHub.
+
+1. Go to Render and create a **New Blueprint**.
+2. Connect the `dagikorra/Oleaf` GitHub repository.
+3. Select the `oleaf-cleaning` service from the blueprint.
+4. Set these secret environment variables:
+
+```text
+ADMIN_PASSWORD=choose-a-strong-password
+CLEANER_PASSWORD=choose-a-strong-password
+```
+
+5. Deploy.
+
+Render will install dependencies, run `npm start`, and serve the site and API from the same URL. The booking form will call `/api/reservations` automatically on that deployed URL.
+
 ## Demo staff accounts
 
 ```text
@@ -39,4 +57,4 @@ FROM_EMAIL=reservations@oleafcleaning.com
 ADMIN_EMAIL=manager@oleafcleaning.com
 ```
 
-GitHub Pages can host the static site, but it cannot run this backend. Deploy the backend to a Node host such as Render, Railway, Fly.io, or a VPS, then set `window.OLEAF_API_BASE` in the front end to that backend URL.
+GitHub Pages can host the static site, but it cannot run this backend. For the full reservation/email/login workflow, use the Render deployment instead of GitHub Pages.

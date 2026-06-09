@@ -4,7 +4,7 @@ const path = require("node:path");
 const crypto = require("node:crypto");
 
 const PORT = Number(process.env.PORT || 8080);
-const HOST = process.env.HOST || "127.0.0.1";
+const HOST = process.env.HOST || "0.0.0.0";
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "manager@oleafcleaning.com";
 const FROM_EMAIL = process.env.FROM_EMAIL || "reservations@oleafcleaning.com";
 const ROOT = __dirname;
