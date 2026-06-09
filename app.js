@@ -49,11 +49,14 @@ const estimateLabel = document.querySelector("#estimateLabel");
 const bookingDate = document.querySelector("#bookingDate");
 const bookingTime = document.querySelector("#bookingTime");
 const address = document.querySelector("#address");
+const customerEmail = document.querySelector("#customerEmail");
+const customerPhone = document.querySelector("#customerPhone");
 const qrImage = document.querySelector("#qrImage");
 const reservationNote = document.querySelector("#reservationNote");
 const taskColumns = document.querySelector("#taskColumns");
 const activeRole = document.querySelector("#activeRole");
 const toast = document.querySelector("#toast");
+const apiBase = window.OLEAF_API_BASE || "";
 
 function todayIso() {
   return new Date().toISOString().slice(0, 10);
@@ -76,6 +79,22 @@ function showToast(message) {
   toast.classList.add("show");
   window.clearTimeout(showToast.timer);
   showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 3000);
+}
+
+async function apiRequest(path, options = {}) {
+  const response = await fetch(`${apiBase}${path}`, {
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers
+    },
+    ...options
+  });
+
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(payload.error || "Request failed");
+  }
+  return payload;
 }
 
 function updateEstimate() {
@@ -203,10 +222,34 @@ renderDetail();
 document.querySelector("#booking-card").addEventListener("submit", (event) => {
   event.preventDefault();
   const selectedOption = serviceType.selectedOptions[0].textContent;
-  reservationNote.textContent = serviceType.value === "house-quote"
-    ? "Quote request received. Admin review is pending."
-    : "Reservation confirmed. Payment authorization is ready for processor connection.";
-  showToast(`${selectedOption} reservation created.`);
+  const selectedPayment = document.querySelector("input[name='payment']:checked");
+  const reservation = {
+    serviceType: serviceType.value,
+    serviceLabel: selectedOption,
+    date: bookingDate.value,
+    time: bookingTime.value,
+    address: address.value,
+    rooms: Number(rooms.value || 1),
+    customerEmail: customerEmail.value,
+    customerPhone: customerPhone.value,
+    paymentMethod: selectedPayment ? selectedPayment.value : "card",
+    estimate: estimate.textContent
+  };
+
+  reservationNote.textContent = "Creating reservation and sending notifications...";
+
+  apiRequest("/api/reservations", {
+    method: "POST",
+    body: JSON.stringify(reservation)
+  }).then((payload) => {
+    reservationNote.textContent = serviceType.value === "house-quote"
+      ? `Quote request ${payload.reservation.id} received. Customer and admin notifications were queued.`
+      : `Reservation ${payload.reservation.id} confirmed. Customer and admin notifications were queued.`;
+    showToast(`${selectedOption} reservation created and emailed.`);
+  }).catch((error) => {
+    reservationNote.textContent = "Reservation preview saved locally. Start the backend server to send emails.";
+    showToast(`Backend unavailable: ${error.message}`);
+  });
 });
 
 document.querySelectorAll("[data-role]").forEach((button) => {
@@ -220,7 +263,19 @@ document.querySelectorAll("[data-role]").forEach((button) => {
 });
 
 document.querySelector("#loginBtn").addEventListener("click", () => {
-  showToast(`${currentRole === "admin" ? "Admin" : "Cleaner"} signed in.`);
+  apiRequest("/api/login", {
+    method: "POST",
+    body: JSON.stringify({
+      role: currentRole,
+      email: document.querySelector("#staffEmail").value,
+      password: document.querySelector("#staffPassword").value
+    })
+  }).then((payload) => {
+    activeRole.textContent = payload.user.role === "admin" ? "Admin" : "Cleaner";
+    showToast(`${activeRole.textContent} signed in.`);
+  }).catch((error) => {
+    showToast(`Login failed: ${error.message}`);
+  });
 });
 
 document.querySelector("#addTaskBtn").addEventListener("click", () => {

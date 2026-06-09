@@ -1,0 +1,13 @@
+{
+  "name": "oleaf-cleaning",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Oleaf Cleaning v1 website with a simple reservation and staff backend.",
+  "scripts": {
+    "start": "node server.js",
+    "check": "node --check app.js && node --check server.js"
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.16"
+  }
+}
